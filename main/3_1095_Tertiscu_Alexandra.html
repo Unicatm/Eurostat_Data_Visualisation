@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="3_1095_Tertiscu_Alexandra.css" />
+  </head>
+  <body>
+    <div class="filtre_container">
+      <select name="tip_indicator" id="indicatori">
+        <option value="all">Toate</option>
+        <option value="sdg_08_10">PIB</option>
+        <option value="demo_mlexpec">Speranta viata</option>
+        <option value="demo_pjan">Populatie</option>
+      </select>
+      <div id="countries_container"></div>
+    </div>
+
+    <div class="table_container">
+      <table id="main_table">
+        <thead>
+          <tr>
+            <th scope="col">An</th>
+            <th scope="col">Țară</th>
+            <th scope="col">PIB</th>
+          </tr>
+        </thead>
+        <tbody id="tbody_main"></tbody>
+      </table>
+    </div>
+
+    <script src="3_1095_Tertiscu_Alexandra.js"></script>
+  </body>
+</html>
