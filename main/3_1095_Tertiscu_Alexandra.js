@@ -3,6 +3,8 @@ const DATA_URL =
 
 const POKEMON_URL = "https://pokeapi.co/api/v2/pokemon/typhlosion";
 
+const wrapper_body = document.querySelector(".wrapper_body");
+
 const table = document.getElementById("main_table");
 const tbodyMain = document.getElementById("tbody_main");
 const countries_container = document.getElementById("countries_container");
@@ -42,10 +44,24 @@ const tariCerute = new Set([
 ]);
 
 let arrTari = [];
-
 let indicator = selectIndicator[0];
 
 console.log(indicator.value);
+
+const btn_remove_chart = document.querySelector(".btn_remove_chart");
+
+const btn_bubble_chart_generate = document.querySelector(
+  "#btn_bubble_chart_generate"
+);
+const modal_bubble_chart = document.querySelector(".modal_bubble_chart");
+const btn_bubble_chart = document.getElementById("btn_bubble_chart");
+let optionAn;
+
+const wrapper_bubble_chart = document.querySelector(".wrapper_bubble_chart");
+const selectAn = document.getElementById("an_bubble");
+const an_titlu_bubble_chart = document.querySelector(".an_titlu_bubble_chart");
+
+// console.log("Heeeree " + optionAn);
 
 async function fetchData() {
   try {
@@ -60,9 +76,10 @@ async function fetchData() {
 
     if (arrTari.length === 0) {
       generateCkbCountries(data);
+      afisareAniBubble(data);
     }
     displayData(data, indicator);
-    console.log(getSelectedCountries());
+    //console.log(getSelectedCountries());
 
     // console.log(data.dimension.geo.category.label["RO"]); //imi da numele full la tara
     // console.log(Object.keys(data.dimension.geo.category.label)); //imi da numele atributului, gen RO
@@ -212,7 +229,54 @@ showButton.addEventListener("click", async () => {
 
   await fetchData();
 });
-// const arrCkb = document.getElementsByClassName("country_ckb");
-// console.log(arrCkb);
+
+// ----- MODALA BUBBLE CHART ------
+btn_bubble_chart.addEventListener("click", () => {
+  modal_bubble_chart.style.display = "flex";
+  wrapper_body.classList.add("blured_bg");
+});
+
+const closeModal = document.querySelector(".modal_bubble_chart i");
+closeModal.addEventListener("click", () => {
+  modal_bubble_chart.style.display = "none";
+  wrapper_body.classList.remove("blured_bg");
+});
+
+btn_remove_chart.addEventListener("click", () => {
+  wrapper_bubble_chart.style.display = "none";
+});
+
+//imi insereaza anii disponibili in selectul de la modala pt bubble chart
+function afisareAniBubble(data) {
+  const selectAni = document.querySelector("#an_bubble");
+
+  const years = data.dimension.time.category.index;
+  const arrYears = Object.keys(years);
+
+  arrYears.forEach((y) => {
+    const option = document.createElement("option");
+    option.setAttribute("value", y);
+    option.innerText = y;
+
+    selectAni.append(option);
+  });
+
+  optionAn = selectAn[0];
+}
+
+console.log(selectAn);
+
+selectAn.addEventListener("change", (e) => {
+  optionAn = selectAn[e.target.selectedIndex];
+  console.log(optionAn);
+});
+
+btn_bubble_chart_generate.addEventListener("click", () => {
+  modal_bubble_chart.style.display = "none";
+  wrapper_body.classList.remove("blured_bg");
+
+  an_titlu_bubble_chart.innerText = optionAn.value;
+  wrapper_bubble_chart.style.display = "block";
+});
 
 fetchData();

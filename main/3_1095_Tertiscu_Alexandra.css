@@ -14,6 +14,8 @@
   font-family: Poppins;
 }
 
+/* =============== TABEL =============== */
+
 .table_container {
   height: 70vh;
   overflow-y: auto;
@@ -72,44 +74,73 @@ td {
   visibility: visible;
 }
 
-/* thead {
-  display: block;
-  width: 100%;
-  background-color: var(--clr-purple900);
-}
-
-tbody {
-  display: block;
-  width: 100%;
-  height: 50vh;
-  overflow-y: scroll;
-} */
-
-/* tbody > tr:hover {
-  background-color: var(--clr-purple100);
-}
-
-tbody tr:nth-child(even) {
-  background-color: #a765940b;
-}
-
-table,
-th,
-tr,
-td {
-  border-collapse: collapse;
-  padding: 1rem;
-  text-align: left;
-}
-
-th,
-tr,
-td {
-} */
-
 #countries_container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 0.8rem;
+}
+
+/* =============== MODALA BUBBLE CHART =============== */
+
+.modal_bubble_chart {
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  top: 30vh;
+  left: 40vw;
+  z-index: 99999;
+  gap: 1.2rem;
+  height: fit-content;
+  width: 20vw;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 2px solid var(--clr-purple300);
+  background: var(--clr-white);
+  backdrop-filter: blur(20px);
+}
+
+.modal_bubble_chart > h2 {
+  font-size: 1em;
+  padding-top: 1.5rem;
+}
+
+.modal_bubble_chart > i {
+  position: absolute;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.wrapper_an_bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  label {
+    font-size: 0.8em;
+  }
+}
+
+.wrapper_bubble_chart {
+  position: relative;
+  width: fit-content;
+}
+
+.wrapper_body {
+  position: relative;
+  z-index: 10;
+}
+
+.blured_bg {
+  filter: blur(5px);
+  background-color: #3b1e5445;
+  transition: filter 0.3ms ease-in-out;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =============== GRAFIC BUBBLE CHART =============== */
+
+.wrapper_bubble_chart {
+  display: none;
 }
