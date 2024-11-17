@@ -9,12 +9,14 @@
   <body>
     <div class="filtre_container">
       <select name="tip_indicator" id="indicatori">
-        <option value="all">Toate</option>
+        <!-- <option value="all">Toate</option> -->
         <option value="sdg_08_10">PIB</option>
         <option value="demo_mlexpec">Speranta viata</option>
         <option value="demo_pjan">Populatie</option>
       </select>
+      <label> <input type="checkbox" id="allCountries" checked /> All </label>
       <div id="countries_container"></div>
+      <button id="show_button">Afiseaza</button>
     </div>
 
     <div class="table_container">

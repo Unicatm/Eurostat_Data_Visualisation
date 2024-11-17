@@ -3,15 +3,12 @@ const DATA_URL =
 
 const POKEMON_URL = "https://pokeapi.co/api/v2/pokemon/typhlosion";
 
-//const URL_EUROSTAT = `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/${indicator}?na_item=B1GQ&unit=CLV10_EUR_HAB&format=JSON`;
-// const URL_VIATA =
-//   "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_mlexpec?sex=T&age=Y1";
-// const URL_POP =
-//   "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan?sex=T&age=TOTAL";
-
 const table = document.getElementById("main_table");
 const tbodyMain = document.getElementById("tbody_main");
 const countries_container = document.getElementById("countries_container");
+const showButton = document.getElementById("show_button");
+
+const allCountriesCbk = document.getElementById("allCountries");
 
 const selectIndicator = document.getElementById("indicatori");
 const tariCerute = new Set([
@@ -50,8 +47,6 @@ let indicator = selectIndicator[0];
 
 console.log(indicator.value);
 
-//console.log(table.childNodes[1].children[0].children[2]);
-
 async function fetchData() {
   try {
     const URL_EUROSTAT = creareURL(indicator.value);
@@ -63,41 +58,45 @@ async function fetchData() {
 
     const data = await response.json();
 
-    const valori = data.value;
-    const geo = data.dimension.geo.category.label;
-    const years = data.dimension.time.category.label;
-
-    const geoIndexes = data.dimension.geo.category.index;
-    const yearsIndexes = data.dimension.time.category.index;
-
-    tbodyMain.innerHTML = "";
-
-    for (const idx in valori) {
-      const idxNumber = parseInt(idx);
-
-      const countryKey = Object.keys(geoIndexes).find(
-        (key) =>
-          geoIndexes[key] ===
-          Math.floor(idxNumber / Object.keys(yearsIndexes).length)
-      );
-      const yearKey = Object.keys(yearsIndexes).find(
-        (key) =>
-          yearsIndexes[key] === idxNumber % Object.keys(yearsIndexes).length
-      );
-
-      const country = geo[countryKey];
-      const year = years[yearKey];
-      const value = valori[idx];
-
-      insertTabel(year, country, value);
+    if (arrTari.length === 0) {
+      generateCkbCountries(data);
     }
-
-    generateCkbCountries(data);
+    displayData(data, indicator);
+    console.log(getSelectedCountries());
 
     // console.log(data.dimension.geo.category.label["RO"]); //imi da numele full la tara
     // console.log(Object.keys(data.dimension.geo.category.label)); //imi da numele atributului, gen RO
   } catch (error) {
     console.error(error);
+  }
+}
+
+function displayData(data) {
+  tbodyMain.innerHTML = "";
+  const valori = data.value;
+  const geo = data.dimension.geo.category.label;
+  const years = data.dimension.time.category.label;
+
+  const geoIndexes = data.dimension.geo.category.index;
+  const yearsIndexes = data.dimension.time.category.index;
+
+  for (const idx in valori) {
+    const idxNumber = parseInt(idx);
+    const countryKey = Object.keys(geoIndexes).find(
+      (key) =>
+        geoIndexes[key] ===
+        Math.floor(idxNumber / Object.keys(yearsIndexes).length)
+    );
+    const yearKey = Object.keys(yearsIndexes).find(
+      (key) =>
+        yearsIndexes[key] === idxNumber % Object.keys(yearsIndexes).length
+    );
+
+    const country = geo[countryKey];
+    const year = years[yearKey];
+    const value = valori[idx];
+
+    insertTabel(year, country, value);
   }
 }
 
@@ -121,26 +120,32 @@ function insertTabel(an, tara, valoare) {
 }
 
 function creareURL(indicator) {
+  const selectedCountries = getSelectedCountries();
+
+  const tariURL = Array.from(selectedCountries)
+    .map((tara) => `&geo=${tara}`)
+    .join("");
+
+  console.log(selectedCountries.length);
+
   if (indicator === "sdg_08_10") {
-    return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/sdg_08_10?na_item=B1GQ&unit=CLV10_EUR_HAB&geoLevel=country`;
+    return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/sdg_08_10?na_item=B1GQ&unit=CLV10_EUR_HAB&lastTimePeriod=15${tariURL}`;
   } else if (indicator == "demo_mlexpec" || indicator == "demo_pjan") {
-    return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/${indicator}?sex=T&age=Y1&geoLevel=country`;
+    return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/${indicator}?sex=T&age=Y1&lastTimePeriod=15${tariURL}`;
   }
+
   return null;
 }
 
 function generateCkbCountries(data) {
   countries_container.innerHTML = "";
-  arrTari = [];
 
   Object.keys(data.dimension.geo.category.label).forEach((at) => {
-    // if (tariCerute.has(at)) {
-    const tara = { abrv: at, nume: data.dimension.geo.category.label[at] };
-    arrTari.push(tara);
-    // }
+    if (tariCerute.has(at)) {
+      const tara = { abrv: at, nume: data.dimension.geo.category.label[at] };
+      arrTari.push(tara);
+    }
   });
-
-  // console.log(arrTari);
 
   arrTari.forEach((t) => {
     const label = document.createElement("label");
@@ -149,22 +154,65 @@ function generateCkbCountries(data) {
     const input = document.createElement("input");
     input.setAttribute("type", "checkbox");
     input.setAttribute("id", t.abrv);
+    input.setAttribute("class", "country_ckb");
+    input.checked = true;
+
+    input.addEventListener("change", () => {
+      updateSelectAllCheckbox();
+    });
 
     label.append(input);
     label.append(t.nume);
-
-    //console.log(label);
 
     countries_container.append(label);
   });
 }
 
-selectIndicator.addEventListener("change", async (e) => {
+// imi arata care casute au fost selectate
+function getSelectedCountries() {
+  const ckbs = document.querySelectorAll(".country_ckb");
+  const selected = [];
+  ckbs.forEach((c) => {
+    if (c.checked) {
+      selected.push(c.id);
+    }
+  });
+  return selected;
+}
+
+// verifica daca toate casutele sunt bifate => All va fi bifat, daca una dintre tari e debifata atunci All se debifeaza
+function updateSelectAllCheckbox() {
+  const countryCkbs = document.querySelectorAll(".country_ckb");
+  const allChecked = Array.from(countryCkbs).every((c) => c.checked);
+  allCountriesCbk.checked = allChecked;
+}
+
+//imi selecteaza/deselecteaza toate casutele daca apas pe All
+allCountriesCbk.addEventListener("change", () => {
+  const isChecked = allCountriesCbk.checked;
+  const countryCkbs = document.querySelectorAll(".country_ckb");
+
+  countryCkbs.forEach((c) => {
+    c.checked = isChecked;
+  });
+
+  if (!isChecked) {
+    countryCkbs[0].checked = "true";
+  }
+});
+
+selectIndicator.addEventListener("change", (e) => {
   indicator = selectIndicator[e.target.selectedIndex];
-  console.log(selectIndicator[e.target.selectedIndex].value);
-  table.childNodes[1].children[0].children[2].innerText =
-    selectIndicator[e.target.selectedIndex].innerText;
+});
+
+showButton.addEventListener("click", async () => {
+  const colIndicator = table.querySelector("thead tr th:last-child");
+  colIndicator.innerText =
+    selectIndicator.options[selectIndicator.selectedIndex].innerText;
+
   await fetchData();
 });
+// const arrCkb = document.getElementsByClassName("country_ckb");
+// console.log(arrCkb);
 
 fetchData();
