@@ -144,3 +144,9 @@ td {
 .wrapper_bubble_chart {
   display: none;
 }
+
+.bubble_chart {
+  width: 50vw;
+  height: 50vh;
+  border: 2px solid red;
+}

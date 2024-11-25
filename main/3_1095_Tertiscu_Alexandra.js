@@ -48,6 +48,7 @@ let indicator = selectIndicator[0];
 
 console.log(indicator.value);
 
+// ===== BUBBLE CHART VAR =====
 const btn_remove_chart = document.querySelector(".btn_remove_chart");
 
 const btn_bubble_chart_generate = document.querySelector(
@@ -60,6 +61,9 @@ let optionAn;
 const wrapper_bubble_chart = document.querySelector(".wrapper_bubble_chart");
 const selectAn = document.getElementById("an_bubble");
 const an_titlu_bubble_chart = document.querySelector(".an_titlu_bubble_chart");
+
+const canvasBubble = document.querySelector(".bubble_chart");
+const ctxBubble = canvasBubble.getContext("2d");
 
 // console.log("Heeeree " + optionAn);
 
@@ -275,8 +279,17 @@ btn_bubble_chart_generate.addEventListener("click", () => {
   modal_bubble_chart.style.display = "none";
   wrapper_body.classList.remove("blured_bg");
 
+  desenareAxeBubble();
   an_titlu_bubble_chart.innerText = optionAn.value;
   wrapper_bubble_chart.style.display = "block";
 });
+
+function desenareAxeBubble() {
+  ctxBubble.beginPath();
+  ctxBubble.moveTo(5, 5);
+  ctxBubble.lineTo(5, canvasBubble.height - 5); // Axă Y
+  ctxBubble.lineTo(canvasBubble.width - 5, canvasBubble.height - 5); // Axă X
+  ctxBubble.stroke();
+}
 
 fetchData();
