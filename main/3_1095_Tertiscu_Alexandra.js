@@ -46,7 +46,7 @@ const tariCerute = new Set([
 let arrTari = [];
 let indicator = selectIndicator[0];
 
-console.log(indicator.value);
+console.log(indicator.dataset.map);
 
 // ===== BUBBLE CHART VAR =====
 const btn_remove_chart = document.querySelector(".btn_remove_chart");
@@ -67,39 +67,73 @@ const ctxBubble = canvasBubble.getContext("2d");
 
 // console.log("Heeeree " + optionAn);
 
+let mapPIB;
+let mapSV;
+let mapPOP;
+
 async function fetchData() {
   try {
-    const URL_EUROSTAT = creareURL(indicator.value);
-    const response = await fetch(URL_EUROSTAT);
+    const dataPIB = await fetchByIndicator("sdg_08_10");
+    const dataSV = await fetchByIndicator("demo_mlexpec");
+    const dataPOP = await fetchByIndicator("demo_pjan");
 
-    if (!response.ok) {
-      throw new Error("Could not fetch resource");
-    }
-
-    const data = await response.json();
+    mapPIB = retriveData(dataPIB);
+    mapSV = retriveData(dataSV);
+    mapPOP = retriveData(dataPOP);
 
     if (arrTari.length === 0) {
-      generateCkbCountries(data);
-      afisareAniBubble(data);
+      generateCkbCountries(dataPIB);
+      afisareAniBubble(dataPIB);
     }
-    displayData(data, indicator);
-    //console.log(getSelectedCountries());
 
-    // console.log(data.dimension.geo.category.label["RO"]); //imi da numele full la tara
-    // console.log(Object.keys(data.dimension.geo.category.label)); //imi da numele atributului, gen RO
+    let mapToShow;
+
+    if (indicator.value === "sdg_08_10") {
+      mapToShow = mapPIB;
+    } else if (indicator.value === "demo_mlexpec") {
+      mapToShow = mapSV;
+    }
+    if (indicator.value === "demo_pjan") {
+      mapToShow = mapPOP;
+    }
+
+    displayData(mapToShow);
   } catch (error) {
     console.error(error);
   }
 }
 
-function displayData(data) {
+async function fetchByIndicator(indicator) {
+  const url = creareURL(indicator);
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error("Could not fetch resource");
+  }
+
+  return await response.json();
+}
+
+function displayData(map) {
   tbodyMain.innerHTML = "";
+
+  for (const [key, value] of map.entries()) {
+    insertTabel(value.year, value.country, value.value);
+  }
+}
+
+// imi pune datele in mapuri in fct de indicator
+function retriveData(data) {
+  const map = new Map();
   const valori = data.value;
   const geo = data.dimension.geo.category.label;
   const years = data.dimension.time.category.label;
 
   const geoIndexes = data.dimension.geo.category.index;
   const yearsIndexes = data.dimension.time.category.index;
+
+  console.log(geo);
 
   for (const idx in valori) {
     const idxNumber = parseInt(idx);
@@ -117,8 +151,13 @@ function displayData(data) {
     const year = years[yearKey];
     const value = valori[idx];
 
-    insertTabel(year, country, value);
+    map.set(`${country}-${year}`, {
+      country: country,
+      year: year,
+      value: value,
+    });
   }
+  return map;
 }
 
 function insertTabel(an, tara, valoare) {
@@ -140,6 +179,7 @@ function insertTabel(an, tara, valoare) {
   tbodyMain.append(tr);
 }
 
+// creeaza url custom in fct de tarile selectate
 function creareURL(indicator) {
   const selectedCountries = getSelectedCountries();
 
@@ -158,6 +198,7 @@ function creareURL(indicator) {
   return null;
 }
 
+// imi genereaza checkbox-urile de la tari
 function generateCkbCountries(data) {
   countries_container.innerHTML = "";
 
@@ -198,6 +239,7 @@ function getSelectedCountries() {
       selected.push(c.id);
     }
   });
+  console.log(selected);
   return selected;
 }
 
@@ -222,6 +264,7 @@ allCountriesCbk.addEventListener("change", () => {
   }
 });
 
+// imi arata ce indicator am selectat
 selectIndicator.addEventListener("change", (e) => {
   indicator = selectIndicator[e.target.selectedIndex];
 });
