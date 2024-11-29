@@ -15,13 +15,20 @@
       <div class="filtre_container">
         <select name="tip_indicator" id="indicatori">
           <!-- <option value="all">Toate</option> -->
-          <option value="sdg_08_10" data-map="mapPIB">PIB</option>
-          <option value="demo_mlexpec" data-map="mapSV">Speranta viata</option>
-          <option value="demo_pjan" data-map="mapPOP">Populatie</option>
+          <option value="sdg_08_10" data-map="mapPIB" data-name="PIB">
+            PIB
+          </option>
+          <option value="demo_mlexpec" data-map="mapSV" data-name="SV">
+            Speranta viata
+          </option>
+          <option value="demo_pjan" data-map="mapPOP" data-name="POP">
+            Populatie
+          </option>
         </select>
         <label> <input type="checkbox" id="allCountries" checked /> All </label>
         <div id="countries_container"></div>
         <button id="show_button">Afiseaza date</button>
+        <button id="btn_distanta_medie">Afiseaza distanta fata de medie</button>
         <div class="container_btns_grafice">
           <button id="btn_bubble_chart">Genereaza bubble chart</button>
         </div>
@@ -48,11 +55,23 @@
           Bubble chart pentru anul
           <span class="an_titlu_bubble_chart">XXXX</span>
         </h3>
-        <canvas class="bubble_chart"></canvas>
+        <canvas class="bubble_chart" width="1100" height="600"></canvas>
       </div>
     </div>
 
-    <div class="modal_bubble_chart">
+    <div class="modala modal_bubble_chart">
+      <i class="fa-solid fa-xmark"></i>
+      <h2>*Toate tarile au fost incluse!</h2>
+      <div class="wrapper_an_bubble">
+        <label for="an_bubble">Selecteaza anul</label>
+        <select name="an_bubble" id="an_bubble">
+          <option value="ultimii 15 ani">Toti ani</option>
+        </select>
+      </div>
+      <button id="btn_bubble_chart_generate">Genereaza</button>
+    </div>
+
+    <!-- <div class="modala modal_distanta_medie">
       <i class="fa-solid fa-xmark"></i>
       <h2>*Toate tarile au fost incluse!</h2>
       <div class="wrapper_an_bubble">
@@ -60,7 +79,7 @@
         <select name="an_bubble" id="an_bubble"></select>
       </div>
       <button id="btn_bubble_chart_generate">Genereaza</button>
-    </div>
+    </div> -->
 
     <script src="3_1095_Tertiscu_Alexandra.js"></script>
   </body>

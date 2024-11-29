@@ -1,9 +1,10 @@
 :root {
-  --clr-purple900: #3b1e54;
+  --clr-purple900: rgb(59, 30, 84);
   --clr-purple700: #582d7e;
-  --clr-purple500: #9b7ebd;
-  --clr-purple300: #9b7ebd;
+  --clr-purple500: rgb(155, 126, 189);
+  --clr-purple300: rgb(155, 126, 189);
   --clr-purple100: #e8ddf6;
+  --clr-purple50: #eee7f7;
   --clr-white: #ffffff;
 }
 
@@ -146,7 +147,8 @@ td {
 }
 
 .bubble_chart {
-  width: 50vw;
-  height: 50vh;
-  border: 2px solid red;
+  border: 2px solid var(--clr-purple100);
+  box-shadow: 12px 12px 0px 0px var(--clr-purple500);
+  border-radius: 10px;
+  padding: 1rem;
 }
