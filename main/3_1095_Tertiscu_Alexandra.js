@@ -19,6 +19,7 @@ const selectIndicator = document.getElementById("indicatori");
 
 let tariURL = "";
 const tariCerute = new Set([
+  // "EU27_2020",
   "BE",
   "BG",
   "CZ",
@@ -51,15 +52,11 @@ const tariCerute = new Set([
 let arrTari = [];
 let indicator = selectIndicator[0];
 
-//console.log(indicator.dataset.map);
-
 // ===== BUBBLE CHART VAR =====
 let current_mode = "bubble";
 const btn_remove_chart = document.querySelector(".btn_remove_chart");
 
-const btn_bubble_chart_generate = document.querySelector(
-  "#btn_bubble_chart_generate"
-);
+const btn_modal_generate = document.querySelector("#btn_modal_generate");
 const modal_bubble_chart = document.querySelector(".modal_bubble_chart");
 const btn_bubble_chart = document.getElementById("btn_bubble_chart");
 let optionAn;
@@ -70,8 +67,6 @@ const an_titlu_bubble_chart = document.querySelector(".an_titlu_bubble_chart");
 
 const canvasBubble = document.querySelector(".bubble_chart");
 const ctxBubble = canvasBubble.getContext("2d");
-
-// console.log("Heeeree " + optionAn);
 
 async function fetchDataForCharts() {
   try {
@@ -86,19 +81,12 @@ async function fetchDataForCharts() {
     const dataMerged = new Map([...mapPIB, ...mapPOP, ...mapSV]);
 
     // console.log("MERGED");
-    // console.log(dataMerged);
+    //console.log(dataMerged);
     return dataMerged;
   } catch (error) {
     console.error(error);
   }
 }
-
-// async function abc() {
-//   const mapAll = await fetchDataForCharts();
-//   console.log(mapAll);
-// }
-
-// abc();
 
 async function fetchData() {
   try {
@@ -110,11 +98,13 @@ async function fetchData() {
     }
 
     const data = await response.json();
+    console.log(data);
     const map = retriveData(data, indicator.dataset.name);
+    console.log(map);
 
     if (arrTari.length === 0) {
       generateCkbCountries(data);
-      afisareAniBubble(data);
+      afisareAniModala(data);
       mapAll = await fetchDataForCharts();
     }
     displayData(map);
@@ -139,6 +129,13 @@ async function fetchByIndicator(indicator) {
 
 function displayData(map) {
   tbodyMain.innerHTML = "";
+
+  // const thead = document.querySelector("#main_table thead");
+  const capuri_tabel = document.querySelector("#main_table thead tr");
+  if (capuri_tabel.children.length === 4) {
+    console.log(capuri_tabel.children);
+    capuri_tabel.removeChild(capuri_tabel.children[2]);
+  }
 
   for (const [key, value] of map.entries()) {
     insertTabel(value.year, value.country, value.value);
@@ -180,7 +177,6 @@ function retriveData(data, str) {
       indicator: str,
     });
   }
-  //console.log(map);
   return map;
 }
 
@@ -323,14 +319,13 @@ selectIndicator.addEventListener("change", (e) => {
 });
 
 showButton.addEventListener("click", async () => {
-  const colIndicator = table.querySelector("thead tr th:last-child");
-  colIndicator.innerText =
-    selectIndicator.options[selectIndicator.selectedIndex].innerText;
+  const colIndicator = table.querySelector("thead tr").children;
+  colIndicator[2].innerText = indicator.dataset.name;
 
   await fetchData();
 });
 
-// ----- ======== MODALA BUBBLE CHART ========= ------
+// ----- ======== MODALA ========= ------
 btn_bubble_chart.addEventListener("click", () => {
   current_mode = "bubble";
   console.log(current_mode);
@@ -349,8 +344,8 @@ btn_remove_chart.addEventListener("click", () => {
   wrapper_bubble_chart.style.display = "none";
 });
 
-//imi insereaza anii disponibili in selectul de la modala pt bubble chart
-function afisareAniBubble(data) {
+//imi insereaza anii disponibili in selectul de la modala
+function afisareAniModala(data) {
   const selectAni = document.querySelector("#an_bubble");
 
   const years = data.dimension.time.category.index;
@@ -374,48 +369,43 @@ selectAn.addEventListener("change", (e) => {
 });
 
 function processDataForChart(mapAll) {
-  const countryData = {}; // Obiect pentru a grupa datele după țară
+  const countryData = {};
 
-  // Iterăm prin fiecare intrare din map
   mapAll.forEach((entry) => {
-    const { country, indicator, value } = entry; // Extragem valorile necesare
+    const { country, indicator, value } = entry;
 
-    // Inițializăm structura pentru țară dacă nu există deja
     if (!countryData[country]) {
       countryData[country] = { country: country };
     }
 
-    // Adăugăm valoarea pentru fiecare indicator
     if (indicator === "PIB") {
-      countryData[country].gdpPerCapita = value;
+      countryData[country].PIB = value;
     } else if (indicator === "POP") {
-      countryData[country].population = value;
+      countryData[country].populatie = value;
     } else if (indicator === "SV") {
-      countryData[country].lifeExpectancy = value;
+      countryData[country].sv = value;
     }
   });
-  console.log(countryData);
   return Object.values(countryData);
 }
 
-btn_bubble_chart_generate.addEventListener("click", () => {
-
+btn_modal_generate.addEventListener("click", () => {
   modal_bubble_chart.style.display = "none";
   wrapper_body.classList.remove("blured_bg");
-
-
-  console.log(current_mode === "bubble");
 
   if (current_mode === "bubble") {
     an_titlu_bubble_chart.innerText = optionAn;
     wrapper_bubble_chart.style.display = "block";
     drawChart();
   } else if (current_mode === "table") {
-    const dataByYear = processDataForChart(mapAll);
-    console.log(dataByYear);
+    console.log(mapAll);
+    const arrDataByYear = filterDataByYear(mapAll, optionAn);
+    modificareStructuraTabel(arrDataByYear);
+    console.log(arrDataByYear);
   }
 });
 
+// ----- ======== DESENARE BUBBLE CHART ========= ------ !!! VEZI CA AM DATELE DOAR DE LA  UN SG AN
 function drawChart() {
   const dataForYear = processDataForChart(mapAll);
 
@@ -493,36 +483,26 @@ function drawBubbleChart(dataForYear) {
   ctx.clearRect(0, 0, canvas.width, canvas.height); // Curățăm canvasul
 
   // Calculăm valorile minime și maxime pentru fiecare indicator
-  const minGDP = Math.min(...dataForYear.map((entry) => entry.gdpPerCapita));
-  const maxGDP = Math.max(...dataForYear.map((entry) => entry.gdpPerCapita));
-  const minLifeExp = Math.min(
-    ...dataForYear.map((entry) => entry.lifeExpectancy)
-  );
-  const maxLifeExp = Math.max(
-    ...dataForYear.map((entry) => entry.lifeExpectancy)
-  );
-  const minPop = Math.min(...dataForYear.map((entry) => entry.population));
-  const maxPop = Math.max(...dataForYear.map((entry) => entry.population));
+  const minGDP = Math.min(...dataForYear.map((entry) => entry.PIB));
+  const maxGDP = Math.max(...dataForYear.map((entry) => entry.PIB));
+  const minLifeExp = Math.min(...dataForYear.map((entry) => entry.sv));
+  const maxLifeExp = Math.max(...dataForYear.map((entry) => entry.sv));
+  const minPop = Math.min(...dataForYear.map((entry) => entry.populatie));
+  const maxPop = Math.max(...dataForYear.map((entry) => entry.populatie));
 
   drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp); // Desenăm axele
 
   // Desenăm fiecare bulă
   dataForYear.forEach((entry) => {
-    const x = scaleValue(
-      entry.gdpPerCapita,
-      minGDP,
-      maxGDP,
-      50,
-      canvas.width - 50
-    );
+    const x = scaleValue(entry.PIB, minGDP, maxGDP, 50, canvas.width - 50);
     const y = scaleValue(
-      entry.lifeExpectancy,
+      entry.sv,
       minLifeExp,
       maxLifeExp,
       canvas.height - 50,
       50
     );
-    const radius = scaleValue(entry.population, minPop, maxPop, 5, 50);
+    const radius = scaleValue(entry.populatie, minPop, maxPop, 5, 50);
 
     // Desenăm bula
     ctx.beginPath();
@@ -545,14 +525,14 @@ function drawBubbleChart(dataForYear) {
 
 const btn_distanta_medie = document.querySelector("#btn_distanta_medie");
 
-function modificareStructuraTabel() {
+function modificareStructuraTabel(arr) {
   const capuri_tabel = document.querySelector("#main_table thead tr");
   const tbody = table.children[1];
   const arrCapuri = capuri_tabel.children;
 
   if (!capuri_tabel.querySelector(".populatie-header")) {
     const th = document.createElement("th");
-    th.innerText = "Populația";
+    th.innerText = "Populatia";
     th.classList.add("populatie-header");
     capuri_tabel.append(th);
   }
@@ -562,6 +542,44 @@ function modificareStructuraTabel() {
   arrCapuri[2].innerText = "Speranta de Viata";
 
   tbody.innerHTML = "";
+
+  console.log(arr);
+
+  const mediePib = arr[0].PIB;
+  const medieSv = arr[0].sv;
+  const mediePop = arr[0].populatie;
+
+  const meanPib = arr.reduce((sum, data) => sum + data.PIB, 0) / arr.length;
+  const meanSv = arr.reduce((sum, data) => sum + data.sv, 0) / arr.length;
+  const meanPop =
+    arr.reduce((sum, data) => sum + data.populatie, 0) / arr.length;
+
+  console.log("MEAM SV");
+  console.log(meanPib);
+  console.log(meanSv);
+  console.log(meanPop);
+
+  arr.forEach((data) => {
+    const tr = document.createElement("tr");
+
+    const tdCountry = document.createElement("td");
+    tdCountry.innerText = data.country;
+
+    const tdPib = document.createElement("td");
+    tdPib.innerText = data.PIB;
+    tdPib.style.backgroundColor = calculCuloare(meanPib, data.PIB);
+
+    const tdSv = document.createElement("td");
+    tdSv.innerText = data.sv;
+    tdSv.style.backgroundColor = calculCuloare(meanSv, data.sv);
+
+    const tdPop = document.createElement("td");
+    tdPop.innerText = data.populatie;
+    tdPop.style.backgroundColor = calculCuloare(meanPop, data.populatie);
+
+    tr.append(tdCountry, tdPib, tdSv, tdPop);
+    tbodyMain.append(tr);
+  });
 }
 
 btn_distanta_medie.addEventListener("click", () => {
@@ -569,10 +587,41 @@ btn_distanta_medie.addEventListener("click", () => {
   console.log(current_mode);
   modal_bubble_chart.style.display = "flex";
   wrapper_body.classList.add("blured_bg");
-
-  //modificareStructuraTabel();
 });
 
-//modificareStructuraTabel();
+function filterDataByYear(map, year) {
+  const countryData = {};
+
+  map.forEach((value) => {
+    const { country, indicator, value: indicatorValue, year: dataYear } = value;
+
+    if (year === dataYear) {
+      if (!countryData[country]) {
+        countryData[country] = { country: country };
+      }
+
+      if (indicator === "PIB") {
+        countryData[country].PIB = indicatorValue;
+      } else if (indicator === "POP") {
+        countryData[country].populatie = indicatorValue;
+      } else if (indicator === "SV") {
+        countryData[country].sv = indicatorValue;
+      }
+    }
+  });
+
+  return Object.values(countryData);
+}
+
+function calculCuloare(val, medie) {
+  const dist = val - medie;
+  const procent = (dist / medie) * 100;
+
+  console.log(procent);
+
+  const r = procent < 0 ? 510 : 510 - procent * 5.1;
+  const g = procent > 0 ? 510 : 510 + procent * 5.1;
+  return `rgb(${r}, ${g}, 0,0.4)`;
+}
 
 fetchData();
