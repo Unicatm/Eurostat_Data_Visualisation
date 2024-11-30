@@ -6,12 +6,12 @@
 
 let mapAll;
 
-const wrapper_body = document.querySelector(".wrapper_body");
+const wrapperBody = document.querySelector(".wrapperBody");
 
-const table = document.getElementById("main_table");
-const tbodyMain = document.getElementById("tbody_main");
-const countries_container = document.getElementById("countries_container");
-const showButton = document.getElementById("show_button");
+const table = document.getElementById("mainTable");
+const tbodyMain = document.getElementById("tbodyMain");
+const countriesContainer = document.getElementById("countriesContainer");
+const btnMainTable = document.getElementById("btnMainTable");
 
 const allCountriesCbk = document.getElementById("allCountries");
 
@@ -54,19 +54,21 @@ let indicator = selectIndicator[0];
 
 // ===== BUBBLE CHART VAR =====
 let current_mode = "bubble";
-const btn_remove_chart = document.querySelector(".btn_remove_chart");
+const btnRemoveChart = document.querySelector(".btnRemoveChart");
 
-const btn_modal_generate = document.querySelector("#btn_modal_generate");
-const modal_bubble_chart = document.querySelector(".modal_bubble_chart");
-const btn_bubble_chart = document.getElementById("btn_bubble_chart");
+const btnModalGenerate = document.querySelector("#btnModalGenerate");
+const modal = document.querySelector(".modalBubbleTabel");
+const btnBubbleChart = document.getElementById("btnBubbleChart");
 let optionAn;
 
-const wrapper_bubble_chart = document.querySelector(".wrapper_bubble_chart");
-const selectAn = document.getElementById("an_bubble");
-const an_titlu_bubble_chart = document.querySelector(".an_titlu_bubble_chart");
+const wrapperBubbleChart = document.querySelector(".wrapperBubbleChart");
+const selectAn = document.getElementById("selectAnModal");
+const anTitluBubbleChart = document.querySelector(".anTitluBubbleChart");
 
-const canvasBubble = document.querySelector(".bubble_chart");
-const ctxBubble = canvasBubble.getContext("2d");
+// ===== MODALA HISTOGRAMA VAR =====
+const modalaHistograma = document.querySelector(".modalHistograma");
+const selectTara = document.getElementById("selectTaraModala");
+const selectIndicatorModala = document.getElementById("selectIndicatorModala");
 
 async function fetchDataForCharts() {
   try {
@@ -80,8 +82,6 @@ async function fetchDataForCharts() {
 
     const dataMerged = new Map([...mapPIB, ...mapPOP, ...mapSV]);
 
-    // console.log("MERGED");
-    //console.log(dataMerged);
     return dataMerged;
   } catch (error) {
     console.error(error);
@@ -98,15 +98,14 @@ async function fetchData() {
     }
 
     const data = await response.json();
-    console.log(data);
     const map = retriveData(data, indicator.dataset.name);
-    console.log(map);
 
     if (arrTari.length === 0) {
       generateCkbCountries(data);
       afisareAniModala(data);
       mapAll = await fetchDataForCharts();
     }
+
     displayData(map);
 
     //console.log(map);
@@ -130,11 +129,12 @@ async function fetchByIndicator(indicator) {
 function displayData(map) {
   tbodyMain.innerHTML = "";
 
-  // const thead = document.querySelector("#main_table thead");
-  const capuri_tabel = document.querySelector("#main_table thead tr");
+  // const thead = document.querySelector("#mainTable thead");
+  const capuri_tabel = document.querySelector("#mainTable thead tr");
   if (capuri_tabel.children.length === 4) {
-    console.log(capuri_tabel.children);
-    capuri_tabel.removeChild(capuri_tabel.children[2]);
+    capuri_tabel.children[1].innerText = "Tara";
+    capuri_tabel.children[2].innerText = `${indicator.innerText}`;
+    capuri_tabel.removeChild(capuri_tabel.children[3]);
   }
 
   for (const [key, value] of map.entries()) {
@@ -151,8 +151,6 @@ function retriveData(data, str) {
 
   const geoIndexes = data.dimension.geo.category.index;
   const yearsIndexes = data.dimension.time.category.index;
-
-  //console.log(geo);
 
   for (const idx in valori) {
     const idxNumber = parseInt(idx);
@@ -249,7 +247,7 @@ function creareURLCharts(indicator, ani) {
 
 // imi genereaza checkbox-urile de la tari
 function generateCkbCountries(data) {
-  countries_container.innerHTML = "";
+  countriesContainer.innerHTML = "";
 
   Object.keys(data.dimension.geo.category.label).forEach((at) => {
     if (tariCerute.has(at)) {
@@ -275,7 +273,7 @@ function generateCkbCountries(data) {
     label.append(input);
     label.append(t.nume);
 
-    countries_container.append(label);
+    countriesContainer.append(label);
   });
 }
 
@@ -318,7 +316,7 @@ selectIndicator.addEventListener("change", (e) => {
   indicator = selectIndicator[e.target.selectedIndex];
 });
 
-showButton.addEventListener("click", async () => {
+btnMainTable.addEventListener("click", async () => {
   const colIndicator = table.querySelector("thead tr").children;
   colIndicator[2].innerText = indicator.dataset.name;
 
@@ -326,27 +324,26 @@ showButton.addEventListener("click", async () => {
 });
 
 // ----- ======== MODALA ========= ------
-btn_bubble_chart.addEventListener("click", () => {
+btnBubbleChart.addEventListener("click", () => {
   current_mode = "bubble";
-  console.log(current_mode);
 
-  modal_bubble_chart.style.display = "flex";
-  wrapper_body.classList.add("blured_bg");
+  modal.style.display = "flex";
+  wrapperBody.classList.add("blured_bg");
 });
 
-const closeModal = document.querySelector(".modal_bubble_chart i");
+const closeModal = document.querySelector(".modal i");
 closeModal.addEventListener("click", () => {
-  modal_bubble_chart.style.display = "none";
-  wrapper_body.classList.remove("blured_bg");
+  modal.style.display = "none";
+  wrapperBody.classList.remove("blured_bg");
 });
 
-btn_remove_chart.addEventListener("click", () => {
-  wrapper_bubble_chart.style.display = "none";
+btnRemoveChart.addEventListener("click", () => {
+  wrapperBubbleChart.style.display = "none";
 });
 
 //imi insereaza anii disponibili in selectul de la modala
 function afisareAniModala(data) {
-  const selectAni = document.querySelector("#an_bubble");
+  const selectAni = document.querySelector("#selectAnModal");
 
   const years = data.dimension.time.category.index;
   const arrYears = Object.keys(years);
@@ -364,50 +361,51 @@ function afisareAniModala(data) {
 
 selectAn.addEventListener("change", (e) => {
   optionAn = selectAn[e.target.selectedIndex].value;
-
-  console.log(optionAn);
 });
 
-function processDataForChart(mapAll) {
+function filterDataByYear(map, year) {
   const countryData = {};
 
-  mapAll.forEach((entry) => {
-    const { country, indicator, value } = entry;
+  map.forEach((value) => {
+    const { country, indicator, value: indicatorValue, year: dataYear } = value;
 
-    if (!countryData[country]) {
-      countryData[country] = { country: country };
-    }
+    if (year === dataYear) {
+      if (!countryData[country]) {
+        countryData[country] = { country: country };
+      }
 
-    if (indicator === "PIB") {
-      countryData[country].PIB = value;
-    } else if (indicator === "POP") {
-      countryData[country].populatie = value;
-    } else if (indicator === "SV") {
-      countryData[country].sv = value;
+      if (indicator === "PIB") {
+        countryData[country].PIB = indicatorValue;
+      } else if (indicator === "POP") {
+        countryData[country].populatie = indicatorValue;
+      } else if (indicator === "SV") {
+        countryData[country].sv = indicatorValue;
+      }
     }
   });
+
   return Object.values(countryData);
 }
 
-btn_modal_generate.addEventListener("click", () => {
-  modal_bubble_chart.style.display = "none";
-  wrapper_body.classList.remove("blured_bg");
+btnModalGenerate.addEventListener("click", () => {
+  modal.style.display = "none";
+  wrapperBody.classList.remove("blured_bg");
 
   if (current_mode === "bubble") {
-    an_titlu_bubble_chart.innerText = optionAn;
-    wrapper_bubble_chart.style.display = "block";
+    anTitluBubbleChart.innerText = optionAn;
+    wrapperBubbleChart.style.display = "block";
     drawChart();
   } else if (current_mode === "table") {
-    console.log(mapAll);
+    // console.log(mapAll);
     const arrDataByYear = filterDataByYear(mapAll, optionAn);
     modificareStructuraTabel(arrDataByYear);
-    console.log(arrDataByYear);
+    // console.log(arrDataByYear);
   }
 });
 
 // ----- ======== DESENARE BUBBLE CHART ========= ------ !!! VEZI CA AM DATELE DOAR DE LA  UN SG AN
 function drawChart() {
-  const dataForYear = processDataForChart(mapAll);
+  const dataForYear = filterDataByYear(mapAll, optionAn);
 
   console.log(dataForYear);
 
@@ -427,7 +425,7 @@ function scaleValue(value, minValue, maxValue, newMin, newMax) {
 }
 
 function drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp) {
-  const canvas = document.querySelector(".bubble_chart");
+  const canvas = document.querySelector(".bubbleChart");
   const ctx = canvas.getContext("2d");
 
   // Desenarea axei X (PIB per capita)
@@ -478,7 +476,7 @@ function drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp) {
 }
 
 function drawBubbleChart(dataForYear) {
-  const canvas = document.querySelector(".bubble_chart");
+  const canvas = document.querySelector(".bubbleChart");
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height); // Curățăm canvasul
 
@@ -523,10 +521,10 @@ function drawBubbleChart(dataForYear) {
 
 // ----- ======== DISTANTA FATA DE MEDIE ========= ------
 
-const btn_distanta_medie = document.querySelector("#btn_distanta_medie");
+const btnDistantaMedie = document.querySelector("#btnDistantaMedie");
 
 function modificareStructuraTabel(arr) {
-  const capuri_tabel = document.querySelector("#main_table thead tr");
+  const capuri_tabel = document.querySelector("#mainTable thead tr");
   const tbody = table.children[1];
   const arrCapuri = capuri_tabel.children;
 
@@ -582,36 +580,12 @@ function modificareStructuraTabel(arr) {
   });
 }
 
-btn_distanta_medie.addEventListener("click", () => {
+btnDistantaMedie.addEventListener("click", () => {
   current_mode = "table";
   console.log(current_mode);
-  modal_bubble_chart.style.display = "flex";
-  wrapper_body.classList.add("blured_bg");
+  modal.style.display = "flex";
+  wrapperBody.classList.add("blured_bg");
 });
-
-function filterDataByYear(map, year) {
-  const countryData = {};
-
-  map.forEach((value) => {
-    const { country, indicator, value: indicatorValue, year: dataYear } = value;
-
-    if (year === dataYear) {
-      if (!countryData[country]) {
-        countryData[country] = { country: country };
-      }
-
-      if (indicator === "PIB") {
-        countryData[country].PIB = indicatorValue;
-      } else if (indicator === "POP") {
-        countryData[country].populatie = indicatorValue;
-      } else if (indicator === "SV") {
-        countryData[country].sv = indicatorValue;
-      }
-    }
-  });
-
-  return Object.values(countryData);
-}
 
 function calculCuloare(val, medie) {
   const dist = val - medie;
@@ -623,5 +597,124 @@ function calculCuloare(val, medie) {
   const g = procent > 0 ? 510 : 510 + procent * 5.1;
   return `rgb(${r}, ${g}, 0,0.4)`;
 }
+
+// ----- ======== HISTOGRAMA ========= ------
+const btnHistograma = document.querySelector("#btnHistograma");
+const btnModalGenerateHistograma = document.querySelector(
+  "#btnModalGenerateHistograma"
+);
+const selectTariModala = document.querySelector("#selectTaraModala");
+const wrapperHistogramChart = document.querySelector("#wrapperHistogramChart");
+let indicatorHisto = selectIndicatorModala[0].value;
+let taraHisto;
+
+const closeModalHisto = document.querySelector(".modalHistograma i");
+closeModalHisto.addEventListener("click", () => {
+  modalaHistograma.style.display = "none";
+  wrapperBody.classList.remove("blured_bg");
+});
+
+btnHistograma.addEventListener("click", () => {
+  modalaHistograma.style.display = "flex";
+  wrapperBody.classList.add("blured_bg");
+
+  generateOptionsCountries();
+});
+
+btnModalGenerateHistograma.addEventListener("click", () => {
+  modalaHistograma.style.display = "none";
+  wrapperBody.classList.remove("blured_bg");
+  wrapperHistogramChart.style.display = "block";
+  drawHistogram(mapAll, taraHisto, indicatorHisto);
+});
+
+function drawHistogram(dataMap, selectedCountry, selectedIndicator) {
+  const svg = document.getElementById("histogramSvg");
+  const taraHisto = document.querySelector(".taraHisto");
+  const indicatorHisto = document.querySelector(".indicatorHisto");
+  const tooltip = document.getElementById("tooltip");
+
+  svg.innerHTML = "";
+  taraHisto.innerText = selectedCountry;
+  indicatorHisto.innerText = selectedIndicator;
+
+  const filteredData = Array.from(dataMap.values())
+    .filter(
+      (entry) =>
+        entry.country === selectedCountry &&
+        entry.indicator === selectedIndicator
+    )
+    .sort((a, b) => a.year - b.year);
+
+  console.log(filteredData);
+
+  const width = 600;
+  const height = 400;
+  const padding = 50;
+
+  const values = filteredData.map((entry) => entry.value);
+  const years = filteredData.map((entry) => entry.year);
+
+  const maxVal = Math.max(...values);
+  const barWidth = (width - 2 * padding) / values.length;
+
+  filteredData.forEach((entry, index) => {
+    const barHeight = (entry.value / maxVal) * (height - 2 * padding);
+
+    // Creăm un element <rect> pentru fiecare bară
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", padding + index * barWidth);
+    rect.setAttribute("y", height - padding - barHeight);
+    rect.setAttribute("width", barWidth - 5);
+    rect.setAttribute("height", barHeight);
+    rect.setAttribute("fill", "steelblue");
+
+    rect.addEventListener("mouseover", (e) => {
+      tooltip.style.display = "block";
+      tooltip.innerText = `An: ${entry.year}\nValoare: ${entry.value}`;
+      tooltip.style.left = `${e.clientX - svg.getBoundingClientRect().left}px`;
+      tooltip.style.top = `${e.clientY - svg.getBoundingClientRect().top}px`;
+    });
+
+    rect.addEventListener("mouseout", () => {
+      tooltip.style.display = "none";
+    });
+
+    svg.appendChild(rect);
+
+    // Adăugăm etichetele anilor sub fiecare bară
+    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("x", padding + index * barWidth + barWidth / 2 - 5);
+    text.setAttribute("y", height - padding + 20);
+    text.textContent = years[index];
+    text.style.fontSize = "12px";
+
+    svg.appendChild(text);
+  });
+}
+
+function generateOptionsCountries() {
+  selectTariModala.innerHTML = "";
+
+  console.log(arrTari);
+
+  arrTari.forEach((t) => {
+    const option = document.createElement("option");
+    option.innerText = t.nume;
+    selectTariModala.append(option);
+  });
+
+  taraHisto = selectTariModala[0].value;
+}
+
+selectIndicatorModala.addEventListener("change", (e) => {
+  indicatorHisto = selectIndicatorModala[e.target.selectedIndex].value;
+  console.log(indicatorHisto);
+});
+
+selectTariModala.addEventListener("change", (e) => {
+  taraHisto = selectTariModala[e.target.selectedIndex].value;
+  console.log(taraHisto);
+});
 
 fetchData();

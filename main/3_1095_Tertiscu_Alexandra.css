@@ -17,7 +17,7 @@
 
 /* =============== TABEL =============== */
 
-.table_container {
+.tableContainer {
   height: 70vh;
   overflow-y: auto;
   width: 80%;
@@ -60,22 +60,22 @@ td {
   text-align: left;
 }
 
-.table_container::-webkit-scrollbar {
+.tableContainer::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
 }
 
-.table_container::-webkit-scrollbar-thumb {
+.tableContainer::-webkit-scrollbar-thumb {
   border-radius: 0.5rem;
   background-color: #0004;
   visibility: hidden;
 }
 
-.table_container:hover::-webkit-scrollbar-thumb {
+.tableContainer:hover::-webkit-scrollbar-thumb {
   visibility: visible;
 }
 
-#countries_container {
+#countriesContainer {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -84,7 +84,7 @@ td {
 
 /* =============== MODALA BUBBLE CHART =============== */
 
-.modal_bubble_chart {
+.modal {
   position: absolute;
   display: none;
   flex-direction: column;
@@ -101,18 +101,18 @@ td {
   backdrop-filter: blur(20px);
 }
 
-.modal_bubble_chart > h2 {
+.modal > h2 {
   font-size: 1em;
   padding-top: 1.5rem;
 }
 
-.modal_bubble_chart > i {
+.modal > i {
   position: absolute;
   cursor: pointer;
   align-self: flex-end;
 }
 
-.wrapper_an_bubble {
+.wrapperAnBubble {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -122,12 +122,12 @@ td {
   }
 }
 
-.wrapper_bubble_chart {
+.wrapperBubbleChart {
   position: relative;
   width: fit-content;
 }
 
-.wrapper_body {
+.wrapperBody {
   position: relative;
   z-index: 10;
 }
@@ -142,13 +142,43 @@ td {
 
 /* =============== GRAFIC BUBBLE CHART =============== */
 
-.wrapper_bubble_chart {
+.wrapperBubbleChart {
   display: none;
+  width: fit-content;
+  margin-top: 2rem;
+  transform: translate(50%, 0%);
 }
 
-.bubble_chart {
+.bubbleChart {
   border: 2px solid var(--clr-purple100);
   box-shadow: 12px 12px 0px 0px var(--clr-purple500);
   border-radius: 10px;
   padding: 1rem;
+}
+
+/* =============== GRAFIC HISTOGRAMA =============== */
+
+#wrapperHistogramChart {
+  position: relative;
+  display: none;
+  width: fit-content;
+  margin-top: 2rem;
+  transform: translate(70%, 0%);
+}
+
+#histogramSvg {
+  border: 2px solid var(--clr-purple100);
+  box-shadow: 12px 12px 0px 0px var(--clr-purple500);
+  border-radius: 10px;
+}
+
+#tooltip {
+  position: absolute;
+  display: none;
+  background-color: white;
+  border: 1px solid var(--clr-purple700);
+  border-radius: 10px;
+  padding: 5px;
+  pointer-events: none;
+  font-size: 12px;
 }

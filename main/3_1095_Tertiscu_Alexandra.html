@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="3_1095_Tertiscu_Alexandra.css" />
   </head>
   <body>
-    <div class="wrapper_body">
-      <div class="filtre_container">
+    <div class="wrapperBody">
+      <div class="filtreContainer">
         <select name="tip_indicator" id="indicatori">
           <!-- <option value="all">Toate</option> -->
           <option value="sdg_08_10" data-map="mapPIB" data-name="PIB">
@@ -26,16 +26,17 @@
           </option>
         </select>
         <label> <input type="checkbox" id="allCountries" checked /> All </label>
-        <div id="countries_container"></div>
-        <button id="show_button">Afiseaza date</button>
-        <button id="btn_distanta_medie">Afiseaza distanta fata de medie</button>
+        <div id="countriesContainer"></div>
+        <button id="btnMainTable">Afiseaza date</button>
+        <button id="btnDistantaMedie">Afiseaza distanta fata de medie</button>
         <div class="container_btns_grafice">
-          <button id="btn_bubble_chart">Genereaza bubble chart</button>
+          <button id="btnBubbleChart">Genereaza bubble chart</button>
+          <button id="btnHistograma">Genereaza Histograma</button>
         </div>
       </div>
 
-      <div class="table_container">
-        <table id="main_table">
+      <div class="tableContainer">
+        <table id="mainTable">
           <thead>
             <tr>
               <th scope="col">An</th>
@@ -43,32 +44,60 @@
               <th scope="col">PIB</th>
             </tr>
           </thead>
-          <tbody id="tbody_main"></tbody>
+          <tbody id="tbodyMain"></tbody>
         </table>
       </div>
 
-      <div class="wrapper_bubble_chart">
-        <button class="btn_remove_chart">
+      <div class="wrapperBubbleChart">
+        <button class="btnRemoveChart">
           Remove chart <i class="fa-solid fa-xmark"></i>
         </button>
         <h3>
           Bubble chart pentru anul
-          <span class="an_titlu_bubble_chart">XXXX</span>
+          <span class="anTitluBubbleChart">XXXX</span>
         </h3>
-        <canvas class="bubble_chart" width="1100" height="600"></canvas>
+        <canvas class="bubbleChart" width="600" height="400"></canvas>
+      </div>
+
+      <div id="wrapperHistogramChart">
+        <div id="tooltip"></div>
+        <h3>
+          Histograma
+          <span class="taraHisto">XXXX</span>
+          pentru <span class="indicatorHisto">XXXX</span>
+        </h3>
+        <svg id="histogramSvg" width="600" height="400"></svg>
       </div>
     </div>
 
-    <div class="modala modal_bubble_chart">
+    <div class="modal modalBubbleTabel">
       <i class="fa-solid fa-xmark"></i>
       <h2>*Toate tarile au fost incluse!</h2>
-      <div class="wrapper_an_bubble">
-        <label for="an_bubble">Selecteaza anul</label>
-        <select name="an_bubble" id="an_bubble">
+      <div class="wrapperAnBubble">
+        <label for="anModala">Selecteaza anul</label>
+        <select name="anModala" id="selectAnModal">
           <option value="ultimii 15 ani">Toti ani</option>
         </select>
       </div>
-      <button id="btn_modal_generate">Genereaza</button>
+      <button id="btnModalGenerate">Genereaza</button>
+    </div>
+
+    <div class="modal modalHistograma">
+      <i class="fa-solid fa-xmark"></i>
+      <h2>*Toti anii au fost inclusi!</h2>
+      <div class="wrapperTari">
+        <label for="tariModala">Selecteaza tara</label>
+        <select name="tariModala" id="selectTaraModala"></select>
+      </div>
+      <div class="wrapperIndicatori">
+        <label for="indicatoriModala">Selecteaza indicatorul</label>
+        <select name="indicatoriModala" id="selectIndicatorModala">
+          <option value="PIB">PIB</option>
+          <option value="SV">Speranta viata</option>
+          <option value="POP">Populatie</option>
+        </select>
+      </div>
+      <button id="btnModalGenerateHistograma">Genereaza</button>
     </div>
 
     <script src="3_1095_Tertiscu_Alexandra.js"></script>
