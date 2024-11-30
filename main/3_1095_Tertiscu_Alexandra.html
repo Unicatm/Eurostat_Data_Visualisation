@@ -13,25 +13,52 @@
   <body>
     <div class="wrapperBody">
       <div class="filtreContainer">
-        <select name="tip_indicator" id="indicatori">
-          <!-- <option value="all">Toate</option> -->
-          <option value="sdg_08_10" data-map="mapPIB" data-name="PIB">
-            PIB
-          </option>
-          <option value="demo_mlexpec" data-map="mapSV" data-name="SV">
-            Speranta viata
-          </option>
-          <option value="demo_pjan" data-map="mapPOP" data-name="POP">
-            Populatie
-          </option>
-        </select>
-        <label> <input type="checkbox" id="allCountries" checked /> All </label>
-        <div id="countriesContainer"></div>
-        <button id="btnMainTable">Afiseaza date</button>
-        <button id="btnDistantaMedie">Afiseaza distanta fata de medie</button>
-        <div class="container_btns_grafice">
-          <button id="btnBubbleChart">Genereaza bubble chart</button>
-          <button id="btnHistograma">Genereaza Histograma</button>
+        <div class="containerBtnTabele">
+          <p>Tabele</p>
+          <div class="containerSelecturi">
+            <div class="wrapperIndicatoriMain">
+              <!-- <label for="tip_indicator">Selecteaza indicatorul</label> -->
+              <select name="tip_indicator" id="indicatori">
+                <option value="sdg_08_10" data-map="mapPIB" data-name="PIB">
+                  PIB
+                </option>
+                <option value="demo_mlexpec" data-map="mapSV" data-name="SV">
+                  Speranta viata
+                </option>
+                <option value="demo_pjan" data-map="mapPOP" data-name="POP">
+                  Populatie
+                </option>
+              </select>
+            </div>
+            <div class="wrapperTariMain">
+              <details>
+                <summary for="tari">Selecteaza tarile</summary>
+                <fieldset>
+                  <ul id="countriesContainer">
+                    <li>
+                      <label> All </label>
+                      <input
+                        name="tari"
+                        type="checkbox"
+                        id="allCountries"
+                        checked
+                      />
+                    </li>
+                  </ul>
+                </fieldset>
+              </details>
+            </div>
+          </div>
+          <div class="containerBtnTab">
+            <button id="btnMainTable">Afiseaza date</button>
+            <button id="btnDistantaMedie">Distanta fata de medie</button>
+          </div>
+        </div>
+
+        <div class="containerBtnGrafice">
+          <p>Grafice</p>
+          <button id="btnBubbleChart">Bubble Chart</button>
+          <button id="btnHistograma">Histograma</button>
         </div>
       </div>
 
@@ -48,25 +75,34 @@
         </table>
       </div>
 
-      <div class="wrapperBubbleChart">
-        <button class="btnRemoveChart">
-          Remove chart <i class="fa-solid fa-xmark"></i>
-        </button>
-        <h3>
-          Bubble chart pentru anul
-          <span class="anTitluBubbleChart">XXXX</span>
-        </h3>
-        <canvas class="bubbleChart" width="600" height="400"></canvas>
-      </div>
+      <div class="containerCharts">
+        <div class="wrapperBubbleChart">
+          <div class="containerContent">
+            <h3>
+              Bubble chart pentru anul
+              <span class="anTitluBubbleChart">XXXX</span>
+            </h3>
+            <button class="btnRemoveChart">
+              Remove chart <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <canvas class="bubbleChart" width="600" height="400"></canvas>
+        </div>
 
-      <div id="wrapperHistogramChart">
-        <div id="tooltip"></div>
-        <h3>
-          Histograma
-          <span class="taraHisto">XXXX</span>
-          pentru <span class="indicatorHisto">XXXX</span>
-        </h3>
-        <svg id="histogramSvg" width="600" height="400"></svg>
+        <div id="wrapperHistogramChart">
+          <div id="tooltip"></div>
+          <div class="containerContent">
+            <h3>
+              Histograma
+              <span class="taraHisto">XXXX</span>
+              pentru <span class="indicatorHisto">XXXX</span>
+            </h3>
+            <button class="btnRemoveChart">
+              Remove chart <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <svg id="histogramSvg" width="600" height="400"></svg>
+        </div>
       </div>
     </div>
 

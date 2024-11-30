@@ -19,7 +19,6 @@ const selectIndicator = document.getElementById("indicatori");
 
 let tariURL = "";
 const tariCerute = new Set([
-  // "EU27_2020",
   "BE",
   "BG",
   "CZ",
@@ -129,7 +128,6 @@ async function fetchByIndicator(indicator) {
 function displayData(map) {
   tbodyMain.innerHTML = "";
 
-  // const thead = document.querySelector("#mainTable thead");
   const capuri_tabel = document.querySelector("#mainTable thead tr");
   if (capuri_tabel.children.length === 4) {
     capuri_tabel.children[1].innerText = "Tara";
@@ -210,10 +208,6 @@ function creareURL(indicator) {
       .join("");
   }
 
-  //console.log(tariURL);
-
-  //console.log(selectedCountries.length);
-
   if (indicator === "sdg_08_10") {
     return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/sdg_08_10?na_item=B1GQ&unit=CLV10_EUR_HAB&lastTimePeriod=15${tariURL}`;
   } else if (indicator == "demo_mlexpec" || indicator == "demo_pjan") {
@@ -247,8 +241,6 @@ function creareURLCharts(indicator, ani) {
 
 // imi genereaza checkbox-urile de la tari
 function generateCkbCountries(data) {
-  countriesContainer.innerHTML = "";
-
   Object.keys(data.dimension.geo.category.label).forEach((at) => {
     if (tariCerute.has(at)) {
       const tara = { abrv: at, nume: data.dimension.geo.category.label[at] };
@@ -257,8 +249,11 @@ function generateCkbCountries(data) {
   });
 
   arrTari.forEach((t) => {
+    const li = document.createElement("li");
+
     const label = document.createElement("label");
     label.setAttribute("for", t.abrv);
+    label.innerText = t.nume;
 
     const input = document.createElement("input");
     input.setAttribute("type", "checkbox");
@@ -270,10 +265,9 @@ function generateCkbCountries(data) {
       updateSelectAllCheckbox();
     });
 
-    label.append(input);
-    label.append(t.nume);
+    li.append(label, input);
 
-    countriesContainer.append(label);
+    countriesContainer.append(li);
   });
 }
 
@@ -403,7 +397,7 @@ btnModalGenerate.addEventListener("click", () => {
   }
 });
 
-// ----- ======== DESENARE BUBBLE CHART ========= ------ !!! VEZI CA AM DATELE DOAR DE LA  UN SG AN
+// ----- ======== DESENARE BUBBLE CHART ========= ------
 function drawChart() {
   const dataForYear = filterDataByYear(mapAll, optionAn);
 
@@ -428,7 +422,6 @@ function drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp) {
   const canvas = document.querySelector(".bubbleChart");
   const ctx = canvas.getContext("2d");
 
-  // Desenarea axei X (PIB per capita)
   ctx.beginPath();
   ctx.moveTo(50, canvas.height - 50);
   ctx.lineTo(canvas.width - 20, canvas.height - 50);
@@ -451,7 +444,6 @@ function drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp) {
     ctx.stroke();
   }
 
-  // Desenarea axei Y (Speranța de viață)
   ctx.beginPath();
   ctx.moveTo(50, canvas.height - 50);
   ctx.lineTo(50, 20);
@@ -478,9 +470,8 @@ function drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp) {
 function drawBubbleChart(dataForYear) {
   const canvas = document.querySelector(".bubbleChart");
   const ctx = canvas.getContext("2d");
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Curățăm canvasul
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Calculăm valorile minime și maxime pentru fiecare indicator
   const minGDP = Math.min(...dataForYear.map((entry) => entry.PIB));
   const maxGDP = Math.max(...dataForYear.map((entry) => entry.PIB));
   const minLifeExp = Math.min(...dataForYear.map((entry) => entry.sv));
@@ -488,9 +479,8 @@ function drawBubbleChart(dataForYear) {
   const minPop = Math.min(...dataForYear.map((entry) => entry.populatie));
   const maxPop = Math.max(...dataForYear.map((entry) => entry.populatie));
 
-  drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp); // Desenăm axele
+  drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp);
 
-  // Desenăm fiecare bulă
   dataForYear.forEach((entry) => {
     const x = scaleValue(entry.PIB, minGDP, maxGDP, 50, canvas.width - 50);
     const y = scaleValue(
@@ -502,7 +492,6 @@ function drawBubbleChart(dataForYear) {
     );
     const radius = scaleValue(entry.populatie, minPop, maxPop, 5, 50);
 
-    // Desenăm bula
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
     ctx.fillStyle = "rgb(155, 126, 189,0.5)";
@@ -510,12 +499,11 @@ function drawBubbleChart(dataForYear) {
     ctx.stroke();
     ctx.strokeStyle = "rgb(59, 30, 84,0.5)";
 
-    // Adăugăm eticheta țării
-    ctx.fillStyle = "black"; // Schimbă culoarea textului pentru a fi vizibil
-    ctx.font = "14px Arial"; // Ajustează dimensiunea textului în funcție de mărimea bulei
+    ctx.fillStyle = "black";
+    ctx.font = "14px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(entry.country, x, y); // Afișează numele țării în centrul bulei
+    ctx.fillText(entry.country, x, y);
   });
 }
 
@@ -540,12 +528,6 @@ function modificareStructuraTabel(arr) {
   arrCapuri[2].innerText = "Speranta de Viata";
 
   tbody.innerHTML = "";
-
-  console.log(arr);
-
-  const mediePib = arr[0].PIB;
-  const medieSv = arr[0].sv;
-  const mediePop = arr[0].populatie;
 
   const meanPib = arr.reduce((sum, data) => sum + data.PIB, 0) / arr.length;
   const meanSv = arr.reduce((sum, data) => sum + data.sv, 0) / arr.length;
@@ -603,6 +585,9 @@ const btnHistograma = document.querySelector("#btnHistograma");
 const btnModalGenerateHistograma = document.querySelector(
   "#btnModalGenerateHistograma"
 );
+const btnRemoveChartHisto = document.querySelector(
+  "#wrapperHistogramChart>.containerContent>.btnRemoveChart"
+);
 const selectTariModala = document.querySelector("#selectTaraModala");
 const wrapperHistogramChart = document.querySelector("#wrapperHistogramChart");
 let indicatorHisto = selectIndicatorModala[0].value;
@@ -634,6 +619,8 @@ function drawHistogram(dataMap, selectedCountry, selectedIndicator) {
   const indicatorHisto = document.querySelector(".indicatorHisto");
   const tooltip = document.getElementById("tooltip");
 
+  console.log(dataMap);
+
   svg.innerHTML = "";
   taraHisto.innerText = selectedCountry;
   indicatorHisto.innerText = selectedIndicator;
@@ -648,8 +635,8 @@ function drawHistogram(dataMap, selectedCountry, selectedIndicator) {
 
   console.log(filteredData);
 
-  const width = 600;
-  const height = 400;
+  const width = svg.getBoundingClientRect().width;
+  const height = svg.getBoundingClientRect().height;
   const padding = 50;
 
   const values = filteredData.map((entry) => entry.value);
@@ -661,13 +648,12 @@ function drawHistogram(dataMap, selectedCountry, selectedIndicator) {
   filteredData.forEach((entry, index) => {
     const barHeight = (entry.value / maxVal) * (height - 2 * padding);
 
-    // Creăm un element <rect> pentru fiecare bară
     const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     rect.setAttribute("x", padding + index * barWidth);
     rect.setAttribute("y", height - padding - barHeight);
     rect.setAttribute("width", barWidth - 5);
     rect.setAttribute("height", barHeight);
-    rect.setAttribute("fill", "steelblue");
+    rect.setAttribute("fill", "var(--clr-purple700)");
 
     rect.addEventListener("mouseover", (e) => {
       tooltip.style.display = "block";
@@ -682,7 +668,6 @@ function drawHistogram(dataMap, selectedCountry, selectedIndicator) {
 
     svg.appendChild(rect);
 
-    // Adăugăm etichetele anilor sub fiecare bară
     const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text.setAttribute("x", padding + index * barWidth + barWidth / 2 - 5);
     text.setAttribute("y", height - padding + 20);
@@ -715,6 +700,17 @@ selectIndicatorModala.addEventListener("change", (e) => {
 selectTariModala.addEventListener("change", (e) => {
   taraHisto = selectTariModala[e.target.selectedIndex].value;
   console.log(taraHisto);
+});
+
+btnRemoveChartHisto.addEventListener("click", () => {
+  wrapperHistogramChart.style.display = "none";
+});
+
+document.addEventListener("click", (event) => {
+  const details = document.querySelector("details");
+  if (details.hasAttribute("open") && !details.contains(event.target)) {
+    details.removeAttribute("open");
+  }
 });
 
 fetchData();

@@ -15,6 +15,127 @@
   font-family: Poppins;
 }
 
+button {
+  padding: 0.3rem 0.5rem;
+  border-radius: 8px;
+  border: none;
+  border: 1px solid var(--clr-purple900);
+  background-color: var(--clr-purple100);
+  box-shadow: var(--clr-purple900) 4px 4px 0 0;
+  color: var(--clr-purple900);
+  font-weight: 500;
+}
+
+button:hover {
+  background-color: #dfcff4;
+}
+
+button:active {
+  box-shadow: var(--clr-purple900) 0px 0px 0 0;
+  transform: translate(2px, 2px);
+}
+
+#btnMainTable,
+#btnBubbleChart {
+  margin-right: 0.6rem;
+}
+
+.wrapperIndicatoriMain {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  gap: 0.5rem;
+}
+
+#indicatori {
+  width: fit-content;
+  padding-right: 2rem;
+}
+
+details {
+  position: relative;
+  border: 1px solid var(--clr-purple900);
+  border-radius: 3px;
+  display: inline-flex;
+  flex-direction: column;
+  padding: 3px 6px;
+  font-size: 14px;
+}
+
+details summary::marker {
+  display: none;
+  font-size: 0;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+  font-size: 0;
+}
+
+details summary::after {
+  content: "\25BC"/ "";
+  display: inline-block;
+  font-size: 0.6rem;
+  height: 1rem;
+  line-height: 1rem;
+  margin-left: 0.5rem;
+  position: relative;
+  transition: transform 0.25s;
+}
+
+details[open] summary::after {
+  z-index: 99999;
+  top: -0.15rem;
+  transform: rotate(180deg);
+}
+
+fieldset {
+  position: absolute; /* Suprapunere peste conținut */
+  top: 95%; /* Poziționează sub butonul de dropdown */
+  left: -1px;
+  z-index: 10;
+  background-color: var(--clr-white);
+  border: 1px solid var(--clr-purple900);
+  border-top: 0;
+  border-radius: 0 0 5px 5px;
+  padding: 0;
+  height: 15rem;
+  overflow-y: scroll;
+  user-select: none;
+}
+
+ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+ul li {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  border-radius: 5px;
+  padding: 0.4rem 0.4rem;
+}
+
+ul li:hover {
+  background-color: var(--clr-white);
+}
+
+fieldset::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px var(--clr-white);
+  background-color: var(--clr-white);
+}
+
+fieldset::-webkit-scrollbar {
+  width: 1px;
+  background-color: var(--clr-white);
+}
+
+fieldset::-webkit-scrollbar-thumb {
+  background-color: var(--clr-purple900);
+}
+
 /* =============== TABEL =============== */
 
 .tableContainer {
@@ -48,11 +169,7 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background-color: var(--clr-purple100);
-}
-
-tbody tr:nth-child(even) {
-  background-color: #a765940b;
+  background-color: var(--clr-purple50);
 }
 
 td {
@@ -73,13 +190,6 @@ td {
 
 .tableContainer:hover::-webkit-scrollbar-thumb {
   visibility: visible;
-}
-
-#countriesContainer {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 0.8rem;
 }
 
 /* =============== MODALA BUBBLE CHART =============== */
@@ -122,11 +232,6 @@ td {
   }
 }
 
-.wrapperBubbleChart {
-  position: relative;
-  width: fit-content;
-}
-
 .wrapperBody {
   position: relative;
   z-index: 10;
@@ -138,24 +243,38 @@ td {
   transition: filter 0.3ms ease-in-out;
   pointer-events: none;
   user-select: none;
+  height: 100vh;
 }
 
 /* =============== GRAFIC BUBBLE CHART =============== */
 
 .wrapperBubbleChart {
+  position: relative;
   display: none;
   width: fit-content;
   margin-top: 2rem;
-  transform: translate(50%, 0%);
 }
 
-.bubbleChart {
-  border: 2px solid var(--clr-purple100);
-  box-shadow: 12px 12px 0px 0px var(--clr-purple500);
+.bubbleChart,
+#histogramSvg {
+  border: 2px solid var(--clr-purple700);
+  box-shadow: 10px 8px 0px 0px var(--clr-purple700);
   border-radius: 10px;
-  padding: 1rem;
 }
 
+.wrapperBubbleChart > h3,
+#wrapperHistogramChart > h3 {
+  margin-bottom: 0.6rem;
+}
+
+.btnRemoveChart {
+  margin-bottom: 1rem;
+}
+
+.containerContent {
+  display: flex;
+  justify-content: space-between;
+}
 /* =============== GRAFIC HISTOGRAMA =============== */
 
 #wrapperHistogramChart {
@@ -163,13 +282,6 @@ td {
   display: none;
   width: fit-content;
   margin-top: 2rem;
-  transform: translate(70%, 0%);
-}
-
-#histogramSvg {
-  border: 2px solid var(--clr-purple100);
-  box-shadow: 12px 12px 0px 0px var(--clr-purple500);
-  border-radius: 10px;
 }
 
 #tooltip {
@@ -181,4 +293,42 @@ td {
   padding: 5px;
   pointer-events: none;
   font-size: 12px;
+}
+
+.filtreContainer {
+  display: flex;
+  width: 80vw;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem auto;
+  gap: 4rem;
+}
+
+.containerBtnGrafice,
+.containerBtnTabele {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.containerBtnGrafice,
+.containerBtnTabele > p {
+  color: var(--clr-purple900);
+  font-weight: bold;
+}
+
+.containerSelecturi {
+  display: flex;
+  gap: 2rem;
+}
+
+.containerBtnTab {
+  display: flex;
+}
+
+.containerCharts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4rem;
 }
