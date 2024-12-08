@@ -114,7 +114,7 @@ async function fetchData() {
 }
 
 async function fetchByIndicator(indicator) {
-  const url = creareURLCharts(indicator, optionAn);
+  const url = creareURLCharts(indicator, "toti");
 
   const response = await fetch(url);
 
@@ -224,7 +224,7 @@ function creareURLCharts(indicator, ani) {
     .map((tara) => `&geo=${tara}`)
     .join("");
 
-  if (ani != "ultimii 15 ani") {
+  if (ani != "toti") {
     aniURL = `&time=${ani}`;
   } else {
     aniURL = "&lastTimePeriod=15";
@@ -494,10 +494,10 @@ function drawBubbleChart(dataForYear) {
 
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    ctx.fillStyle = "rgb(155, 126, 189,0.5)";
+    ctx.fillStyle = "rgb(95, 67, 178,0.5)";
     ctx.fill();
     ctx.stroke();
-    ctx.strokeStyle = "rgb(59, 30, 84,0.5)";
+    ctx.strokeStyle = "rgb(95, 67, 178,0.5)";
 
     ctx.fillStyle = "black";
     ctx.font = "14px Arial";
@@ -653,7 +653,7 @@ function drawHistogram(dataMap, selectedCountry, selectedIndicator) {
     rect.setAttribute("y", height - padding - barHeight);
     rect.setAttribute("width", barWidth - 5);
     rect.setAttribute("height", barHeight);
-    rect.setAttribute("fill", "var(--clr-purple700)");
+    rect.setAttribute("fill", "var(--clr-lightPurple)");
 
     rect.addEventListener("mouseover", (e) => {
       tooltip.style.display = "block";
