@@ -1,9 +1,3 @@
-// let mapPIBAll;
-// let mapSVAll;
-// let mapPOPAll;
-
-// let dataMerged = new Map();
-
 let mapAll;
 
 const wrapperBody = document.querySelector(".wrapperBody");
@@ -357,6 +351,7 @@ selectAn.addEventListener("change", (e) => {
   optionAn = selectAn[e.target.selectedIndex].value;
 });
 
+//imi filtreaza map-ul cu datele de pe anul introdus
 function filterDataByYear(map, year) {
   const countryData = {};
 
@@ -404,7 +399,7 @@ function drawChart() {
   console.log(dataForYear);
 
   if (dataForYear.length === 0) {
-    console.error("Nu există date pentru anul selectat.");
+    console.error("Nu exista date pentru anul selectat");
     return;
   }
 
@@ -418,7 +413,7 @@ function scaleValue(value, minValue, maxValue, newMin, newMax) {
   );
 }
 
-function drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp) {
+function drawAxes(minPIB, maxPIB, minSV, maxSV) {
   const canvas = document.querySelector(".bubbleChart");
   const ctx = canvas.getContext("2d");
 
@@ -433,10 +428,10 @@ function drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp) {
     canvas.height - 10
   );
 
-  const numTicksX = 5;
-  for (let i = 0; i <= numTicksX; i++) {
-    const x = 50 + ((canvas.width - 70) / numTicksX) * i;
-    const value = Math.round(minGDP + ((maxGDP - minGDP) / numTicksX) * i);
+  const liniiX = 5;
+  for (let i = 0; i <= liniiX; i++) {
+    const x = 50 + ((canvas.width - 70) / liniiX) * i;
+    const value = Math.round(minPIB + ((maxPIB - minPIB) / liniiX) * i);
     ctx.fillText(value, x - 10, canvas.height - 30);
     ctx.beginPath();
     ctx.moveTo(x, canvas.height - 55);
@@ -453,12 +448,10 @@ function drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp) {
   ctx.fillText("Speranța de viață", -canvas.height / 2 - 40, 15);
   ctx.restore();
 
-  const numTicksY = 5;
-  for (let i = 0; i <= numTicksY; i++) {
-    const y = canvas.height - 50 - ((canvas.height - 70) / numTicksY) * i;
-    const value = Math.round(
-      minLifeExp + ((maxLifeExp - minLifeExp) / numTicksY) * i
-    );
+  const liniiY = 5;
+  for (let i = 0; i <= liniiY; i++) {
+    const y = canvas.height - 50 - ((canvas.height - 70) / liniiY) * i;
+    const value = Math.round(minSV + ((maxSV - minSV) / liniiY) * i);
     ctx.fillText(value, 15, y + 5);
     ctx.beginPath();
     ctx.moveTo(45, y);
@@ -472,24 +465,18 @@ function drawBubbleChart(dataForYear) {
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const minGDP = Math.min(...dataForYear.map((entry) => entry.PIB));
-  const maxGDP = Math.max(...dataForYear.map((entry) => entry.PIB));
-  const minLifeExp = Math.min(...dataForYear.map((entry) => entry.sv));
-  const maxLifeExp = Math.max(...dataForYear.map((entry) => entry.sv));
+  const minPIB = Math.min(...dataForYear.map((entry) => entry.PIB));
+  const maxPIB = Math.max(...dataForYear.map((entry) => entry.PIB));
+  const minSV = Math.min(...dataForYear.map((entry) => entry.sv));
+  const maxSV = Math.max(...dataForYear.map((entry) => entry.sv));
   const minPop = Math.min(...dataForYear.map((entry) => entry.populatie));
   const maxPop = Math.max(...dataForYear.map((entry) => entry.populatie));
 
-  drawAxes(minGDP, maxGDP, minLifeExp, maxLifeExp);
+  drawAxes(minPIB, maxPIB, minSV, maxSV);
 
   dataForYear.forEach((entry) => {
-    const x = scaleValue(entry.PIB, minGDP, maxGDP, 50, canvas.width - 50);
-    const y = scaleValue(
-      entry.sv,
-      minLifeExp,
-      maxLifeExp,
-      canvas.height - 50,
-      50
-    );
+    const x = scaleValue(entry.PIB, minPIB, maxPIB, 50, canvas.width - 50);
+    const y = scaleValue(entry.sv, minSV, maxSV, canvas.height - 50, 50);
     const radius = scaleValue(entry.populatie, minPop, maxPop, 5, 50);
 
     ctx.beginPath();
