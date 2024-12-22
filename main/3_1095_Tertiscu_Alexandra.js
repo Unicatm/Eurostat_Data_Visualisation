@@ -445,7 +445,7 @@ function drawAxes(minPIB, maxPIB, minSV, maxSV) {
   ctx.stroke();
   ctx.save();
   ctx.rotate(-Math.PI / 2);
-  ctx.fillText("Speranța de viață", -canvas.height / 2 - 40, 15);
+  ctx.fillText("Speranta de viata", -canvas.height / 2 - 40, 15);
   ctx.restore();
 
   const liniiY = 5;
