@@ -100,8 +100,6 @@ async function fetchData() {
     }
 
     displayData(map);
-
-    //console.log(map);
   } catch (error) {
     console.error(error);
   }
@@ -129,13 +127,31 @@ function displayData(map) {
     capuri_tabel.removeChild(capuri_tabel.children[3]);
   }
 
-  for (const [key, value] of map.entries()) {
-    insertTabel(value.year, value.country, value.value);
+  console.log(map.size);
+  if (map.size === 0) {
+    tbodyMain.classList.add("dataNotFound");
+
+    const tr = document.createElement("tr");
+    tr.classList.add("error");
+
+    const td = document.createElement("td");
+    td.innerText = "Datele nu au fost gasite. Selectati alt indicator!";
+    td.setAttribute("colspan", "3");
+    tr.appendChild(td);
+
+    tbodyMain.appendChild(tr);
+  } else {
+    tbodyMain.classList.remove("dataNotFound");
+    for (const [key, value] of map.entries()) {
+      insertTabel(value.year, value.country, value.value);
+    }
   }
 }
 
 // imi pune datele in mapuri in fct de indicator
 function retriveData(data, str) {
+  // console.log("DATA");
+  // console.log(data);
   const map = new Map();
   const valori = data.value;
   const geo = data.dimension.geo.category.label;
@@ -144,8 +160,13 @@ function retriveData(data, str) {
   const geoIndexes = data.dimension.geo.category.index;
   const yearsIndexes = data.dimension.time.category.index;
 
+  // console.log(Object.keys(yearsIndexes).length);
+  // console.log(geoIndexes);
   for (const idx in valori) {
     const idxNumber = parseInt(idx);
+
+    // console.log(Math.floor(78 / 26));
+
     const countryKey = Object.keys(geoIndexes).find(
       (key) =>
         geoIndexes[key] ===
