@@ -224,7 +224,7 @@ function creareURL(indicator) {
   }
 
   if (indicator === "sdg_08_10") {
-    return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/sdg_08_10?na_item=B1GQ&unit=CLV10_EUR_HAB&lastTimePeriod=15${tariURL}`;
+    return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/sdg_08_10?lastTimePeriod=15${tariURL}`;
   } else if (indicator == "demo_mlexpec" || indicator == "demo_pjan") {
     return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/${indicator}?sex=T&age=Y1&lastTimePeriod=15${tariURL}`;
   }
@@ -246,7 +246,7 @@ function creareURLCharts(indicator, ani) {
   }
 
   if (indicator === "sdg_08_10") {
-    return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/sdg_08_10?na_item=B1GQ&unit=CLV10_EUR_HAB${aniURL}${tariURL}`;
+    return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/sdg_08_10?lastTimePeriod=15${aniURL}${tariURL}`;
   } else if (indicator == "demo_mlexpec" || indicator == "demo_pjan") {
     return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/${indicator}?sex=T&age=Y1${aniURL}${tariURL}`;
   }
@@ -416,6 +416,8 @@ btnModalGenerate.addEventListener("click", () => {
 // ----- ======== DESENARE BUBBLE CHART ========= ------
 function drawChart() {
   const dataForYear = filterDataByYear(mapAll, optionAn);
+
+  console.log(dataForYear);
 
   console.log(dataForYear);
 
